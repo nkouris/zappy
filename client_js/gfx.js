@@ -7,11 +7,16 @@ function setupSphericalGrid(model) {
     let vector = new THREE.Vector3();
     model.rotation.x -= Math.PI / 2;
     console.log(model.isMesh);
+    model.geometry.computeBoundingBox();
+    let boundingBox = model.geometry.boundingBox;
+    var modelWidth = boundingBox.max.x - boundingBox.min.x;
     console.log("here");
-    for (let i = 0; i < 20; i++) {
-        for (let j = 0; j < 20; j++) {
+    let dim = 20;
+    let onedeg = (2 * Math.PI) / dim;
+    for (let i = 2; i < dim; i++) {
+        for (let j = 2; j < dim; j++) {
             modelCopy = model.clone();
-            let phiCoords = new THREE.Spherical(5, i, j);
+            let phiCoords = new THREE.Spherical((modelWidth * dim * modelWidth + 30) / (2 * Math.PI), i * onedeg, j * onedeg);
             modelCopy.position.setFromSpherical(phiCoords);
             vector.copy( modelCopy.position ).multiplyScalar( 2 );
 			modelCopy.lookAt( vector );
