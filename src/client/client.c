@@ -15,36 +15,35 @@
 #include "communication.h"
 #include "player.h"
 
-
 /* method function prototypes */
-static int32_t	new(int32_t cl);
-static int32_t	isplayer(int32_t cl);
-static void		del(int32_t cl);
+static int32_t new (int32_t cl);
+static int32_t isplayer(int32_t cl);
+static void del(int32_t cl);
 
 /* method object */
-t_client_methods	client = {
+t_client_methods client = {
 	&new,
 	&isplayer,
-	&del
-};
+	&del};
 
-static int32_t		new(int32_t cl)
+static int32_t new (int32_t cl)
 {
-	int32_t	ret;
+	int32_t ret;
 
 	ret = EXIT_SUCCESS;
 	printf("<--- NEW CLIENT --->\n");
 	if (!((SRV_TEMP.purgatory)[cl]))
 	{
+		printf("Send handshake request");
 		ret = communicate.toclient.outgoing(cl, "WELCOME\n");
 		(SRV_TEMP.purgatory)[cl] = NOT_ACCEPTED;
 	}
 	return (ret);
 }
 
-static int32_t		isplayer(int32_t cl)
+static int32_t isplayer(int32_t cl)
 {
-	int32_t	ret;
+	int32_t ret;
 
 	if (player.islost(cl))
 	{
@@ -59,7 +58,7 @@ static int32_t		isplayer(int32_t cl)
 	return (ret);
 }
 
-static void			del(int32_t cl)
+static void del(int32_t cl)
 {
 	close(cl);
 	FD_CLR(cl, SRV_SOCK.copy);

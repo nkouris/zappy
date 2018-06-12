@@ -41,7 +41,7 @@ static inline __attribute__((always_inline))int32_t	pregame_message(int32_t i)
 			if (client.isplayer(i) == EXIT_FAILURE)
 			{
 				printf("fail is player\n");
-				return (EXIT_FAILURE);
+				// return (EXIT_FAILURE);
 			}
 		}
 	}

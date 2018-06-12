@@ -1,0 +1,33 @@
+/* Declare console font-face */
+@font-face{
+    font-family: "SourceCodePro";
+    src: url("fonts/SourceCodePro-Regular.ttf") format("truetype");
+}
+body{
+    overflow:hidden;
+}
+#console {
+    font-family: "SourceCodePro";
+    color: rgb(4, 184, 4);
+    background-color: black;
+    position: absolute;
+    width: 100%;
+    height: 50%;
+    overflow:auto;
+}
+
+#reconnectBtn{
+    font-family: "SourceCodePro";
+    position: absolute;
+    top: 50%;
+}
+
+#gameViewport{
+    position: absolute;
+    top: 55%;
+}
+
+.errormsg{
+    font-family: "SourceCodePro";
+    color: rgb(184, 10, 4);
+}

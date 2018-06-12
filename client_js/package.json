@@ -1,0 +1,31 @@
+{
+  "name": "zappy",
+  "version": "0.0.1",
+  "description": "The Zappy Game of AI Survival",
+  "main": "zappy_init.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "dependencies": {
+    "electron": "^2.0.2",
+    "ws": "^5.2.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "start": "electron ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nkouris/zappy.git"
+  },
+  "keywords": [
+    "zappy",
+    "42"
+  ],
+  "author": "alnim, nkouris, passef",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/nkouris/zappy/issues"
+  },
+  "homepage": "https://github.com/nkouris/zappy#readme"
+}
