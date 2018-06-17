@@ -2,7 +2,6 @@
 
 let debug = require('./debug');
 let manage = require('./manage');
-let gfx = require('./gfx');
 /* Import: the net library for using unix sockets in js. */
 let unixSock = require('net');
 /* Zappy Controller */
@@ -20,9 +19,9 @@ let zsock = new unixSock.Socket({
 zsock = zsock.setEncoding('utf8');
 /* Connect: the zsock to the correct destination. */
 zsock.connect({
-    port: 5001,
+    port: 5000,
     host: 'localhost'
-})
+});
 /* Upon: data incoming recieved, what should be done. */
 let response = "";
 zsock.on('data', function (buffer) {
@@ -67,11 +66,9 @@ zsock.on('timeout', function (err) {
 let reconnectBtn = document.getElementById("reconnectBtn");
 
 /* Add: Onclick listener on reconnectBtn for running reconnect on zsock */
-reconnectBtn.onclick = function(){
+reconnectBtn.onclick = function () {
     manage.reconnect(zsock, "localhost", 5001);
 }
 
-gfx.init();
-gfx.animate();
 
 module.exports.$Z = $Z;
