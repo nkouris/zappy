@@ -10,10 +10,90 @@
     <script src="libs/ColladaLoader.js"></script>
     <script src="libs/Detector.js"></script>
     <script src="libs/GLTFLoader.js"></script>
+    <script src="libs/THREE.TargetCamera.min.js"></script>
     <!-- <script src="libs/Box3.js"></script> -->
 </head>
 
 <body>
+    <div id="title-bar">
+        <div id="title-bar-btns">
+        </div>
+    </div>
+
+    <script>
+        (function () {
+            // Retrieve remote BrowserWindow
+            const { BrowserWindow } = require('electron').remote
+        })();
+    </script>
+    <div id="resourceDisplay">
+        <h8 style="text-decoration: underline">Resources:</h8>
+        <div class="colorTile" id="Food">
+            <a class="name"></a>
+            <span class="quants"></span>
+        </div>
+        <div class="colorTile" id="Linemate">
+            <a class="name"></a>
+            <span class="quants"></span>
+        </div>
+        <div class="colorTile" id="Deraumere">
+            <a class="name"></a>
+            <span class="quants"></span>
+        </div>
+        <div class="colorTile" id="Sibur">
+            <a class="name"></a>
+            <span class="quants"></span>
+        </div>
+        <div class="colorTile" id="Mendiane">
+            <a class="name"></a>
+            <span class="quants"></span>
+        </div>
+        <div class="colorTile" id="Phiras">
+            <a class="name"></a>
+            <span class="quants"></span>
+        </div>
+        <div class="colorTile" id="Thystame">
+            <a class="name"></a>
+            <span class="quants"></span>
+        </div>
+    </div>
+    <div id="playerInventoryDisplay">
+        <h8 style="text-decoration: underline">Player Info</h8>
+        <div id="PlayerInfo">Team:
+            <span id="TeamName"></span>
+        </div>
+        <div>Lvl:
+            <span id="Lvl"></span>
+        </div>
+        <div class="colorTile" id="Food">
+            <a class="inv_name"></a>
+            <span class="inv_quants"></span>
+        </div>
+        <div class="colorTile" id="Linemate">
+            <a class="inv_name"></a>
+            <span class="inv_quants"></span>
+        </div>
+        <div class="colorTile" id="Deraumere">
+            <a class="inv_name"></a>
+            <span class="inv_quants"></span>
+        </div>
+        <div class="colorTile" id="Sibur">
+            <a class="inv_name"></a>
+            <span class="inv_quants"></span>
+        </div>
+        <div class="colorTile" id="Mendiane">
+            <a class="inv_name"></a>
+            <span class="inv_quants"></span>
+        </div>
+        <div class="colorTile" id="Phiras">
+            <a class="inv_name"></a>
+            <span class="inv_quants"></span>
+        </div>
+        <div class="colorTile" id="Thystame">
+            <a class="inv_name"></a>
+            <span class="inv_quants"></span>
+        </div>
+    </div>
     <div id="gameViewport"></div>
     <script>
         require("./zappy");

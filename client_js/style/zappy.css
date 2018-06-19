@@ -19,7 +19,8 @@ body{
 #reconnectBtn{
     font-family: "SourceCodePro";
     position: absolute;
-    top: 50%;
+    bottom:0px;
+    right: 0px;
 }
 
 #gameViewport{

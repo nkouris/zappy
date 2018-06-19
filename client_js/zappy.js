@@ -1,5 +1,6 @@
 'use strict';
-
+var remote = require('electron').remote,
+args = remote.getGlobal('sharedObject').prop1;
 let debug = require('./debug');
 let manage = require('./manage');
 /* Import: the net library for using unix sockets in js. */
@@ -19,8 +20,8 @@ let zsock = new unixSock.Socket({
 zsock = zsock.setEncoding('utf8');
 /* Connect: the zsock to the correct destination. */
 zsock.connect({
-    port: 5000,
-    host: 'localhost'
+    port: args[3],
+    host: args[4]
 });
 /* Upon: data incoming recieved, what should be done. */
 let response = "";
@@ -67,7 +68,7 @@ let reconnectBtn = document.getElementById("reconnectBtn");
 
 /* Add: Onclick listener on reconnectBtn for running reconnect on zsock */
 reconnectBtn.onclick = function () {
-    manage.reconnect(zsock, "localhost", 5001);
+    manage.reconnect(zsock, args[4], args[3]);
 }
 
 

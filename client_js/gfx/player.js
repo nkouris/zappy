@@ -9,8 +9,8 @@ Pt.prototype.setX = function (x) {
 Pt.prototype.setY = function (y) {
     this.y = y;
 }
-function specialAbs(num, cap){
-    if(num < 0){
+function specialAbs(num, cap) {
+    if (num < 0) {
         return cap + num;
     }
     return num;
@@ -25,13 +25,16 @@ Pt.prototype.isEqual = function (comparePt, o) {
 function Player(op) {
     this.lvl = op.lvl;
     this.id = op.id;
-    this.inventory = op.inventory;
+    this.inventory = [];
     this.team = op.team;
     this.orientation = op.orientation;
     this.loc = new Pt(op.x, op.y);
     this.pTarget = new Pt(op.x, op.y);
     this.target = new Pt(op.x, op.y);
     this.model = op.model;
+    this.setHeight = false;
+    this.inBroadcast;
+    this.broadcastTorus = op.broadcastTorus;
 }
 
 Player.prototype.moveTowardLoc = function (timeExec, timeInterval) {
@@ -44,11 +47,10 @@ Player.prototype.moveTowardLoc = function (timeExec, timeInterval) {
         return;
     }
     let delta = {};
-    console.log("Time exec: ", timeExec, Math.floor(this.loc.x), "||", Math.floor(this.loc.y));
-    if (timeExec >= 6 / timeInterval) {
+    // console.log("Time exec: ", timeExec, Math.floor(this.loc.x), "||", Math.floor(this.loc.y));
+    if (timeExec >= 6 / timeInterval || timeInterval >= 100) {
         this.loc.x = this.target.x;
         this.loc.y = this.target.y;
-        console.warn("Or In hERE")
         return;
     } else {
         delta = {
@@ -62,14 +64,23 @@ Player.prototype.moveTowardLoc = function (timeExec, timeInterval) {
             return;
         }
     }
-    if (this.orientation == 1)
+    if (this.loc.y < this.target.y)
         this.loc.y += delta.y;
-    else if (this.orientation == 2)
-        this.loc.x += delta.x;
-    else if (this.orientation == 3)
+    else if (this.loc.y > this.target.y)
         this.loc.y -= delta.y;
-    else if (this.orientation == 4)
+    if (this.loc.x < this.target.x)
+        this.loc.x += delta.x;
+    else if (this.loc.x > this.target.x)
         this.loc.x -= delta.x;
+    this.model.children[0].rotation.z += delta.x;
 }
-
+let $quantsSpans = document.getElementsByClassName("inv_quants");
+let $teamName = document.getElementById("TeamName");
+let $Lvl = document.getElementById("Lvl");
+Player.prototype.displayInventory = function () {
+    $teamName.innerHTML = this.team;
+    $Lvl.innerHTML = this.lvl;
+    for (let i = 0; i < $quantsSpans.length; i++)
+        $quantsSpans[i].innerHTML = this.inventory[i];
+}
 module.exports.class = Player;

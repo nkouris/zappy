@@ -3,8 +3,38 @@
     font-family: "SourceCodePro";
     src: url("fonts/SourceCodePro-Regular.ttf") format("truetype");
 }
-body{
+body {
     overflow:hidden;
+    padding: 0px;
+    margin: 0px;
+}
+
+#title-bar {
+    -webkit-app-region: drag;
+    height: 40px;
+    text-align: center;
+    line-height: 40px;
+    vertical-align: middle;
+    background-color: #03a9f4;
+    padding: none;
+    margin: 0px;
+    z-index: 10;
+}
+
+#title {
+    position: fixed;
+    top: 0px;
+    left: 6px;
+    color:white;
+    z-index: 10;
+}
+
+#title-bar-btns {
+    -webkit-app-region: no-drag;
+    position: fixed;
+    top: 0px;
+    left: 6px;
+    z-index: 10;
 }
 #console {
     font-family: "SourceCodePro";
@@ -16,6 +46,25 @@ body{
     overflow:auto;
 }
 
+#playerInventoryDisplay{
+    font-family: "SourceCodePro";
+    right: 0px;
+    position: fixed;
+    z-index: 10;
+    width: 110px;
+    bottom:0px;
+}
+.colorTile{
+    width: 110px;
+    margin-right: 0px;
+    display:inline-block;
+}
+#resourceDisplay{
+    font-family: "SourceCodePro";
+    position:fixed;
+    z-index: 10;
+    bottom:0px;
+}
 #reconnectBtn{
     font-family: "SourceCodePro";
     position: absolute;

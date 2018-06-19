@@ -1,4 +1,5 @@
 let modelImport = require("./importModels");
+let click = require("./click");
 let viewport, camera, scene, renderer, model, controls;
 let gfxConfig = {
     mapWidth: 0,
@@ -9,21 +10,22 @@ let gfxConfig = {
 }
 function addPlanetLandSphere() {
     var geometry = new THREE.SphereGeometry((gfxConfig.modelWidth * (gfxConfig.greaterDim * 7 / 5) * 2) / (2 * Math.PI) + 0.5, 32, 32)
-    var material = new THREE.MeshPhongMaterial({
-        color: "#89FA05",
-        alphaTest: 0.5
+    var material = new THREE.MeshBasicMaterial({
+        color: "#62d2a2",
+        shininess: 1
     })
     var earthMesh = new THREE.Mesh(geometry, material)
     scene.add(earthMesh)
 }
 
-function setPositionOnGrid(model, x, y) {
+function setPositionOnGrid(model, x, y, zoffset) {
+    if (zoffset == null) zoffset = 0;
     let vector = new THREE.Vector3();
     let phiCoords;
-    if (model.name == "Scene")
-        phiCoords = new THREE.Spherical((gfxConfig.modelWidth * (gfxConfig.greaterDim * 7 / 5) * 2) / (2 * Math.PI) + 0.9, (x + (1 / 5 * gfxConfig.mapWidth)) * (gfxConfig.onedegHorz / 2), y * (gfxConfig.onedegVert));
+    if (model.name == "chappie")
+        phiCoords = new THREE.Spherical((gfxConfig.modelWidth * (gfxConfig.greaterDim * 7 / 5) * 2) / (2 * Math.PI) + 0.9 + zoffset, (x + (1 / 5 * gfxConfig.mapWidth)) * (gfxConfig.onedegHorz / 2), y * (gfxConfig.onedegVert));
     else
-        phiCoords = new THREE.Spherical((gfxConfig.modelWidth * (gfxConfig.greaterDim * 7 / 5) * 2) / (2 * Math.PI), (x + (1 / 5 * gfxConfig.mapWidth)) * (gfxConfig.onedegHorz / 2), y * (gfxConfig.onedegVert));
+        phiCoords = new THREE.Spherical((gfxConfig.modelWidth * (gfxConfig.greaterDim * 7 / 5) * 2) / (2 * Math.PI) + zoffset, (x + (1 / 5 * gfxConfig.mapWidth)) * (gfxConfig.onedegHorz / 2), y * (gfxConfig.onedegVert));
     model.position.setFromSpherical(phiCoords);
     // }
     if (model == gfxConfig.modelChap) {
@@ -62,6 +64,14 @@ function setupSphericalGrid(model) {
     for (let i = 1; i <= (gfxConfig.mapWidth); i++) {
         for (let j = 1; j <= gfxConfig.mapHeight; j++) {
             modelCopy = model.clone();
+            modelCopy.material = model.material.clone();
+            modelCopy.name = "tile";
+            modelCopy.tileX = i - 1;
+            modelCopy.tileY = j - 1;
+
+            modelCopy.callback = function () {
+                this.material.color.setHex("0xc06c84");
+            }
             setPositionOnGrid(modelCopy, i, j);
             scene.add(modelCopy);
         }
@@ -92,13 +102,17 @@ function loadAllModels(fx) {
     viewport.height = window.innerHeight;
     renderer = new THREE.WebGLRenderer({ antialias: true });
     renderer.setSize(viewport.width, viewport.height);
+    renderer.domElement.addEventListener("click", click.onclick, true);
+    module.exports.renderer = renderer;
     viewport.appendChild(renderer.domElement);
-    camera = new THREE.PerspectiveCamera(45, viewport.width / viewport.height, 1, 10000);
+    camera = new THREE.TargetCamera(45, viewport.width / viewport.height, 1, 10000);
     camera.position.set(0, 5, 1.5).setLength(100);
+    module.exports.camera = camera;
     module.exports.scene = scene = new THREE.Scene;
     scene.background = new THREE.Color(0xffffff);
     clock = new THREE.Clock();
     controls = new THREE.OrbitControls(camera, renderer.domElement);
+    module.exports.orbitControls = controls;
     controls.target.set(0, 0, 0);
     let loadingManger = new THREE.LoadingManager(function () {
         scene.add(model);
@@ -131,17 +145,36 @@ function init() {
     var light = new THREE.AmbientLight(0x222222);
     scene.add(light);
     //
-    var worldAxis = new THREE.AxesHelper(20);
-    scene.add(worldAxis);
+    // var worldAxis = new THREE.AxesHelper(20);
+    // scene.add(worldAxis);
     window.addEventListener('resize', onWindowResize, false);
 }
+function getPlayerHeight(player){
+    let heightMultiplier = 0;
+    for(let aplayer in gfxConfig.players){
+        if(aplayer != player.id){
+            if(gfxConfig.players[aplayer].setHeight == false && gfxConfig.players[aplayer].target.isEqual(player.target))
+                heightMultiplier++;
+        }
+    }                                      
+    player.setHeight = true;
+    // console.error(heightMultiplier);
+    return heightMultiplier;
+}
 
+function setAllPlayersSetHeightToZero(){
+    for(let aplayer in gfxConfig.players){
+            gfxConfig.players[aplayer].setHeight = false;
+    }                                      
+}
 function drawPlayers() {
     let player = null;
     for (let playerid in gfxConfig.players) {
         player = gfxConfig.players[playerid];
         player.moveTowardLoc(gfxConfig.delta, gfxConfig.timeInterval);
-        setPositionOnGrid(player.model, player.loc.x + 1, player.loc.y + 1);
+        setPositionOnGrid(player.model, player.loc.x + 1, player.loc.y + 1, getPlayerHeight(player));
+        // if(player.inBroadcast != undefined && player.inBroadcast <= new Date() + (1000 * 7 / gfxConfig.timeInterval))
+        //     player.broadcastTorus.scale.set(player.broadcastTorus.scale.x + 1, 1, player.broadcastTorus.scale.z + 1);
     }
 }
 
@@ -165,6 +198,14 @@ function render() {
     //     model.rotation.z += delta * 0.5;
     // }
     drawPlayers();
+    setAllPlayersSetHeightToZero();
+    if (click.pclickedObj != undefined && click.pclickedObj.tile != undefined)
+        resources.display(click.pclickedObj.tile.tileX, click.pclickedObj.tile.tileY);
+    if (click.pclickedObj != undefined && click.pclickedObj.chappie != undefined)
+    {
+        gfxConfig.players[click.pclickedObj.chappie.playerId].displayInventory();
+    }
+    model.rotation.y += 0.1;
     // if (gfxConfig.modelChap != undefined) {
     //     setPositionOnGrid(gfxConfig.modelChap, x, y);
     //     gfxConfig.modelChap.children[0].rotation.z += 0.1;

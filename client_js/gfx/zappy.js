@@ -1,5 +1,6 @@
 'use strict';
-
+var remote = require('electron').remote,
+args = remote.getGlobal('sharedObject').prop1;
 let debug = require('./debug');
 let manage = require('./manage');
 let gfx = require('./gfx');
@@ -19,25 +20,26 @@ let zsock = new unixSock.Socket({
 /* Set the encoding for the socket to utf8 */
 zsock = zsock.setEncoding('utf8');
 /* Connect: the zsock to the correct destination. */
-gfx.loadify(function(){
-    zsock.connect({
-        port: 5001,
-        host: 'localhost'
-    });
+console.log("connecting...", args[3], args[2]);
+zsock.connect({
+    port: args[3],
+    host: args[2]
 });
 /* Upon: data incoming recieved, what should be done. */
 let response = "";
-zsock.on('data', function (buffer) {
-    debug.log('server', buffer);
-    buffer = buffer.split('\n');
-    for(let newBuff of buffer){
-        response = "";
-        response = manage.responseToServer(newBuff);
-        if (response != "") {
-            debug.log('client', response);
-            zsock.write(response);
+gfx.loadify(function () {
+    zsock.on('data', function (buffer) {
+        debug.log('server', buffer);
+        buffer = buffer.split('\n');
+        for (let newBuff of buffer) {
+            response = "";
+            response = manage.responseToServer(newBuff);
+            if (response != "") {
+                debug.log('client', response);
+                zsock.write(response);
+            }
         }
-    }
+    });
 });
 
 zsock.on('connect', function () {
@@ -69,7 +71,7 @@ zsock.on('timeout', function (err) {
 
 // /* Add: Onclick listener on reconnectBtn for running reconnect on zsock */
 // reconnectBtn.onclick = function(){
-    // manage.reconnect(zsock, "localhost", 5001);
+// manage.reconnect(zsock, "localhost", 5001);
 // }
 
 

@@ -1,3 +1,4 @@
+let manage = require('../manage');
 function getSquareTravelCoords(squareNum) {
     let squaresToMoveForward = Math.floor(Math.sqrt(squareNum));
     let lateralMovement = squareNum -
@@ -7,15 +8,15 @@ function getSquareTravelCoords(squareNum) {
 
 function getCmdsfSquareNum(squareNum) {
     let cmds = "";
-    let dir = "droite";
+    let dir = manage.commands[1];
     let travelCoord = getSquareTravelCoords(squareNum);
     for (let i = 0; i < travelCoord[0]; i++) {
-        cmds += 'avance\n';
+        cmds += manage.commands[0] + '\n';
     }
     if (travelCoord[1] < 0)
-        dir = "gauche";
+        dir = manage.commands[2];
     for (let i = 0; i < Math.abs(travelCoord[1]); i++)
-        cmds += dir + '\navance\n';
+        cmds += dir + '\n' + manage.commands[0] + '\n';
     return cmds;
 }
 

@@ -1,13 +1,16 @@
 zappy = require('./zappy');
 aisurvive = require('./AI/survive');
+const { spawn } = require('child_process');
+var remote = require('electron').remote,
+    args = remote.getGlobal('sharedObject').prop1;
 const commands = [
     "avance",
     "droite",
     "gauche",
     "voir",
     "inventaire",
-    "prend NULL",
-    "pose NULL",
+    "prend",
+    "pose",
     "expluse",
     "broadcast huzaa",
     "incantation",
@@ -15,6 +18,27 @@ const commands = [
     "connect_nbr"
 ];
 
+const commands_fr = [
+    "advance",
+    "right",
+    "left",
+    "see",
+    "inventory",
+    "take",
+    "put",
+    "kick",
+    "broadcast huzaa",
+    "incantation",
+    "fork",
+    "connect_nbr"
+];
+
+const items_fr = [
+    "food"
+]
+const items = [
+    "nourriture"
+]
 /* :>pickRndCommand:
     - Pick a RndCommand
     */
@@ -44,13 +68,25 @@ function isInitDataFormat(buffer) {
 /* :> responseToServer:
     - Manages the proper response to the server upon a message (buffer).
 */
+function fork_client_exponentially() {
+    const ls = spawn('./client.sh', ['-n', args[2], '-p', args[3], '-h', args[4]],{
+        stdio: 'ignore'
+      });
+
+    ls.on('close', (code) => {
+        console.log(`child process exited with code ${code}`);
+    });
+}
+let hasSeen = false;
 function responseToServer(buffer) {
     let response = "";
     console.log(buffer);
     if (buffer == "WELCOME\n" || buffer == "BIENVENUE\n")
-        response = "team1\n";
-    else if (isInitDataFormat(buffer)) {
-        response = "voir" + '\n';
+        response = args[2] + "\n";
+    else if (hasSeen == false && isInitDataFormat(buffer)) {
+        response = commands[3] + '\n' + commands[10] + '\n';
+        // fork_client_exponentially();
+        hasSeen = true;
     } else
         response = aisurvive.response(buffer);
     return response;
@@ -70,3 +106,5 @@ function reconnect(socket, host, port) {
 module.exports.responseToServer = responseToServer;
 module.exports.reconnect = reconnect;
 module.exports.pickRndCommand = pickRndCommand;
+module.exports.commands = commands;
+module.exports.items = items;

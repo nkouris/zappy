@@ -7,11 +7,12 @@ function goToSquareWithFood(serverResponse){
     let items;
     for(let i = 0; i < serverResponse.length; i++){
         items = serverResponse[i].split(' '); 
-        if(items.indexOf("nourriture") > -1){
-            return memory.getCmdsfSquareNum(i) + "prend nourriture\n" + "voir\n";
+        console.log(items);
+        if(items.indexOf(manage.items[0]) > -1){
+            return memory.getCmdsfSquareNum(i) + manage.commands[5] + ' ' + manage.items[0] + '\n' + manage.commands[3] + '\n';
         }
     }
-    return "avance\nvoir\n";
+    return manage.commands[0] + "\n" + manage.commands[3] + "\n";
 }
 function AISurviveResponse(serverResponse){
     let response = "";
