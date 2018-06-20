@@ -1,6 +1,6 @@
 'use strict';
 var remote = require('electron').remote,
-args = remote.getGlobal('sharedObject').prop1;
+    args = remote.getGlobal('sharedObject').prop1;
 let debug = require('./debug');
 let manage = require('./manage');
 /* Import: the net library for using unix sockets in js. */
@@ -30,6 +30,7 @@ zsock.on('data', function (buffer) {
     response = manage.responseToServer(buffer);
     console.log(response);
     if (response != "") {
+        console.log(response);
         debug.log('client', response);
         zsock.write(response);
     }

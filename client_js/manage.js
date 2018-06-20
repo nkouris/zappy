@@ -13,7 +13,7 @@ const commands = [
     "prend",
     "pose",
     "expluse",
-    "broadcast huzaa",
+    "broadcast",
     "incantation",
     "fork",
     "connect_nbr"
@@ -28,7 +28,7 @@ const commands_fr = [
     "take",
     "put",
     "kick",
-    "broadcast huzaa",
+    "broadcast",
     "incantation",
     "fork",
     "connect_nbr"
@@ -52,6 +52,10 @@ const items = [
     "phiras",
     "thystame"
 ];
+
+let turnRight = commands[1] + '\n';
+let turnLeft = commands[2] + '\n'; 
+let advance = commands[0] + '\n';
 /* :>pickRndCommand:
     - Pick a RndCommand
     */
@@ -122,3 +126,6 @@ module.exports.pickRndCommand = pickRndCommand;
 module.exports.commands = commands;
 module.exports.items = items;
 module.exports.fork_client = fork_client;
+module.exports.advance = advance;
+module.exports.turnLeft = turnLeft;
+module.exports.turnRight = turnRight;

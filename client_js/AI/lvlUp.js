@@ -17,9 +17,7 @@ function itemThatsNeeded() {
         if (incantNeedsSchema[i] > memory.resourcesGuess[i])
             return i;
     }
-    console.error("DONE COLLECTING");
-    memory.inBroadcast = true;
-    manage.fork_client();
+    return -1;
 }
 
 function goToSquareWithNeededResources(serverResponse) {
@@ -56,16 +54,80 @@ function setFromInventoryResponse(buffer) {
     let elemItemIndex = 0;
     for (let i = 0; i < buffer.length; i++) {
         elem = buffer[i].split(' ');
-        if ((elemItemIndex = manage.items.indexOf(elem[0])) > 0)
+        console.log(elem[0], "adding for inventory", parseInt(elem[1]));
+        if ((elemItemIndex = manage.items.indexOf(elem[0])) >= 0)
             memory.resourcesGuess[elemItemIndex] = parseInt(elem[1]);
     }
+}
+
+function goToHeardBlock(squareNum) {
+    console.log("Going to heard block...", squareNum);
+    if (squareNum == 0)
+        return [manage.commands[11] + '\n', 0];
+    if (squareNum == 1)
+        return [manage.advance, 1];
+    else if (squareNum == 2)
+        return [manage.advance + '' + manage.turnLeft + '' + manage.advance, 3];
+    else if (squareNum == 3)
+        return [manage.turnLeft + manage.advance, 2];
+    else if (squareNum == 4)
+        return [manage.turnLeft + '' + manage.advance + '' + manage.turnLeft + ' ' + manage.advance, 4];
+    else if (squareNum == 5)
+        return [manage.turnLeft + '' + manage.turnLeft + '' + manage.advance, 3];
+    else if (squareNum == 6)
+        return [manage.turnRight + '' + manage.advance + '' + manage.turnRight + '' + manage.advance, 4];
+    else if (squareNum == 7)
+        return [manage.turnRight + '' + manage.advance, 2];
+    else if (squareNum == 8)
+        return [manage.advance + '' + manage.turnRight + '' + manage.advance, 3];
+    return ["", 0];
+}
+
+function parseMessage(serverResponse) {
+    serverResponse = serverResponse.split(' ')[1].split(',');
+    let squareToMoveTo = parseInt(serverResponse[0]);
+    if (parseInt(serverResponse[1]) == memory.lvl) {
+        if (parseInt(serverResponse[2]) == 0)
+            return squareToMoveTo;
+        else
+            return 0;
+    }
+    return -1;
+}
+
+function ifBroadcast() {
+    if (memory.broadcastDelay <= 0) {
+        memory.broadcastDelay = 10;
+        return manage.commands[8] + ' ' + memory.lvl + ',' + 0 + '\n';
+    }
+    memory.broadcastDelay--;
+    return manage.commands[8] + ' ' + memory.lvl + ',' + -1 + '\n';
 }
 
 function AILevelUpResponse(serverResponse) {
     let response = "";
     //Before this check if food has reached large value, like 50, keep checking if it needs food, food always above 50.
-    if (memory.inBroadcast == true)
-        return aisurvive.response(serverResponse);
+    if (itemThatsNeeded() == -1) {
+        memory.inBroadcast = true;
+        if (memory.hasForked == false) {
+            console.error("DONE COLLECTING FOR LEVEL");
+            manage.fork_client();
+            memory.hasForked = true;
+            return manage.commands[10] + '\n';
+        }
+    }
+    if (memory.inBroadcast == true) {
+        console.log("FOOODD", memory.resourcesGuess[0]);
+        if (memory.resourcesGuess[0] > 50 && memory.goToLeader == false) {
+            memory.doingBroadcast = true;
+            console.warn("DOING BROADCAST");
+            return ifBroadcast();
+        }
+        else if (memory.goToLeader == true || memory.doingBroadcast == false || memory.resourcesGuess[0] <= 10) {
+            memory.doingBroadcast = false;
+            return aisurvive.response(serverResponse);
+        }
+    }
     serverResponse = serverResponse.split('\n');
     console.log(serverResponse);
     for (let i = 0; i < serverResponse.length; i++) {
@@ -83,3 +145,7 @@ function AILevelUpResponse(serverResponse) {
 }
 
 module.exports.response = AILevelUpResponse;
+module.exports.isInventoryResponse = isInventoryResponse;
+module.exports.setFromInventoryResponse = setFromInventoryResponse;
+module.exports.parseMessage = parseMessage;
+module.exports.goToHeardBlock = goToHeardBlock;

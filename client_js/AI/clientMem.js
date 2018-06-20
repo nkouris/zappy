@@ -24,8 +24,15 @@ module.exports = {
     lvl: 1,
     inIncantation: false,
     inBroadcast: false,
+    doingBroadcast: false,
+    goToLeader: false,
     resourcesGuess: [0,0,0,0,0,0,0],
     getSquareTravelCoords: getSquareTravelCoords,
     AIType: "Survive",
-    getCmdsfSquareNum: getCmdsfSquareNum
+    isLeader: false,
+    blockToGoTo: -1,
+    getCmdsfSquareNum: getCmdsfSquareNum,
+    hasForked: false,
+    okRecieved: false,
+    broadcastDelay: 0,
 }
