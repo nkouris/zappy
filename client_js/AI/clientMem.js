@@ -22,6 +22,9 @@ function getCmdsfSquareNum(squareNum) {
 
 module.exports = {
     lvl: 1,
+    inIncantation: false,
+    inBroadcast: false,
+    resourcesGuess: [0,0,0,0,0,0,0],
     getSquareTravelCoords: getSquareTravelCoords,
     AIType: "Survive",
     getCmdsfSquareNum: getCmdsfSquareNum

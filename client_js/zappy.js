@@ -47,6 +47,7 @@ zsock.on('close', function (err) {
 });
 
 zsock.on('end', function (err) {
+    manage.fork_client();
     debug.err("server", "Server Disconnected");
 });
 

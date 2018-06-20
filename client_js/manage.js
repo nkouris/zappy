@@ -1,5 +1,6 @@
 zappy = require('./zappy');
 aisurvive = require('./AI/survive');
+aiLvlUp = require('./AI/lvlUp');
 const { spawn } = require('child_process');
 var remote = require('electron').remote,
     args = remote.getGlobal('sharedObject').prop1;
@@ -34,11 +35,23 @@ const commands_fr = [
 ];
 
 const items_fr = [
-    "food"
+    "food",
+    "linemate",
+    "deraumere",
+    "sibur",
+    "mendiane",
+    "phiras",
+    "thystame"
 ]
 const items = [
-    "nourriture"
-]
+    "nourriture",
+    "linemate",
+    "deraumere",
+    "sibur",
+    "mendiane",
+    "phiras",
+    "thystame"
+];
 /* :>pickRndCommand:
     - Pick a RndCommand
     */
@@ -68,7 +81,7 @@ function isInitDataFormat(buffer) {
 /* :> responseToServer:
     - Manages the proper response to the server upon a message (buffer).
 */
-function fork_client_exponentially() {
+function fork_client() {
     const ls = spawn('./client.sh', ['-n', args[2], '-p', args[3], '-h', args[4]],{
         stdio: 'ignore'
       });
@@ -84,11 +97,11 @@ function responseToServer(buffer) {
     if (buffer == "WELCOME\n" || buffer == "BIENVENUE\n")
         response = args[2] + "\n";
     else if (hasSeen == false && isInitDataFormat(buffer)) {
-        response = commands[3] + '\n' + commands[10] + '\n';
+        response = commands[3] + '\n' + commands[10] + '\n' + commands[4] + '\n';
         // fork_client_exponentially();
         hasSeen = true;
     } else
-        response = aisurvive.response(buffer);
+        response = aiLvlUp.response(buffer);
     return response;
 }
 
@@ -108,3 +121,4 @@ module.exports.reconnect = reconnect;
 module.exports.pickRndCommand = pickRndCommand;
 module.exports.commands = commands;
 module.exports.items = items;
+module.exports.fork_client = fork_client;

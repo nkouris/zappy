@@ -14,6 +14,7 @@ function goToSquareWithFood(serverResponse){
     }
     return manage.commands[0] + "\n" + manage.commands[3] + "\n";
 }
+
 function AISurviveResponse(serverResponse){
     let response = "";
     serverResponse = serverResponse.split('\n');

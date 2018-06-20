@@ -149,23 +149,23 @@ function init() {
     // scene.add(worldAxis);
     window.addEventListener('resize', onWindowResize, false);
 }
-function getPlayerHeight(player){
+function getPlayerHeight(player) {
     let heightMultiplier = 0;
-    for(let aplayer in gfxConfig.players){
-        if(aplayer != player.id){
-            if(gfxConfig.players[aplayer].setHeight == false && gfxConfig.players[aplayer].target.isEqual(player.target))
+    for (let aplayer in gfxConfig.players) {
+        if (aplayer != player.id) {
+            if (gfxConfig.players[aplayer].setHeight == false && gfxConfig.players[aplayer].target.isEqual(player.target))
                 heightMultiplier++;
         }
-    }                                      
+    }
     player.setHeight = true;
     // console.error(heightMultiplier);
     return heightMultiplier;
 }
 
-function setAllPlayersSetHeightToZero(){
-    for(let aplayer in gfxConfig.players){
-            gfxConfig.players[aplayer].setHeight = false;
-    }                                      
+function setAllPlayersSetHeightToZero() {
+    for (let aplayer in gfxConfig.players) {
+        gfxConfig.players[aplayer].setHeight = false;
+    }
 }
 function drawPlayers() {
     let player = null;
@@ -201,9 +201,9 @@ function render() {
     setAllPlayersSetHeightToZero();
     if (click.pclickedObj != undefined && click.pclickedObj.tile != undefined)
         resources.display(click.pclickedObj.tile.tileX, click.pclickedObj.tile.tileY);
-    if (click.pclickedObj != undefined && click.pclickedObj.chappie != undefined)
-    {
-        gfxConfig.players[click.pclickedObj.chappie.playerId].displayInventory();
+    if (click.pclickedObj != undefined && click.pclickedObj.chappie != undefined) {
+        if (gfxConfig.players[click.pclickedObj.chappie.playerId] != undefined)
+            gfxConfig.players[click.pclickedObj.chappie.playerId].displayInventory();
     }
     model.rotation.y += 0.1;
     // if (gfxConfig.modelChap != undefined) {
