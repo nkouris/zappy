@@ -15,8 +15,9 @@ function getCmdsfSquareNum(squareNum) {
     }
     if (travelCoord[1] < 0)
         dir = manage.commands[2];
+    cmds += dir + '\n';
     for (let i = 0; i < Math.abs(travelCoord[1]); i++)
-        cmds += dir + '\n' + manage.commands[0] + '\n';
+        cmds += manage.commands[0] + '\n';
     return cmds;
 }
 
@@ -34,5 +35,5 @@ module.exports = {
     getCmdsfSquareNum: getCmdsfSquareNum,
     hasForked: false,
     okRecieved: false,
-    broadcastDelay: 0,
+    broadcastDelay: 10,
 }

@@ -23,7 +23,7 @@ function AISurviveResponse(serverResponse) {
     let okRecieved = false;
     for (let i = 0; i < serverResponse.length; i++) {
         console.log(memory.okRecieved);
-        if(serverResponse[i] == 'ok')
+        if (serverResponse[i] == 'ok')
             memory.okRecieved--;
         if (serverResponse[i][0] == 'm' && memory.okRecieved <= 0) {
             if (memory.resourcesGuess[0] > 20) {
@@ -33,11 +33,15 @@ function AISurviveResponse(serverResponse) {
                     let goToBlock = aiLvlUp.goToHeardBlock(memory.blockToGoTo);
                     console.log("Going to: ", goToBlock);
                     memory.okRecieved = goToBlock[1];
-                    return goToBlock[0];
+                    console.warn("Going to the LEADER");
+                    return goToBlock[0] + manage.commands[4] + '\n';
                 }
+            } else {
+                memory.goToLeader = false;
             }
         }
-        else if (serverResponse[i][0] == '{') {
+        else if (serverResponse[i][0] == '{' && memory.goToLeader == false) {
+            console.warn("Going to the SURVIVE");
             if (aiLvlUp.isInventoryResponse(serverResponse[i])) {
                 console.log("In here");
                 aiLvlUp.setFromInventoryResponse(serverResponse[i]);

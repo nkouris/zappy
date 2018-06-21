@@ -12,7 +12,7 @@ let levelUpSchema = [
 ];
 
 function itemThatsNeeded() {
-    let incantNeedsSchema = levelUpSchema[memory.lvl].slice(1);
+    let incantNeedsSchema = levelUpSchema[memory.lvl - 1];
     for (let i = 1; i < memory.resourcesGuess.length; i++) {
         if (incantNeedsSchema[i] > memory.resourcesGuess[i])
             return i;
@@ -21,7 +21,7 @@ function itemThatsNeeded() {
 }
 
 function goToSquareWithNeededResources(serverResponse) {
-    serverResponse = serverResponse.slice(1, serverResponse.length - 2);
+    serverResponse = serverResponse.slice(1, serverResponse.length - 1);
     serverResponse = serverResponse.split(', ');
     let itemNeeded = itemThatsNeeded();
     let items;
@@ -48,7 +48,7 @@ function isInventoryResponse(buffer) {
     return true;
 }
 function setFromInventoryResponse(buffer) {
-    buffer = buffer.slice(1, buffer.length - 2);
+    buffer = buffer.slice(1, buffer.length - 1);
     buffer = buffer.split(', ');
     let elem = null;
     let elemItemIndex = 0;
@@ -101,12 +101,63 @@ function ifBroadcast() {
         return manage.commands[8] + ' ' + memory.lvl + ',' + 0 + '\n';
     }
     memory.broadcastDelay--;
-    return manage.commands[8] + ' ' + memory.lvl + ',' + -1 + '\n';
+    if (memory.broadcastDelay % 2 == 0)
+        return manage.commands[3] + '\n';
+    return manage.commands[4] + '\n';
 }
 
+function howManyPlayersOnSquare(serverResponse) {
+    let numPlayers = 0;
+    serverResponse = serverResponse.slice(1, serverResponse.length - 2);
+    serverResponse = serverResponse.split(', ');
+    let contents = null;
+    contents = serverResponse[0].split(' ');
+    for (let j = 0; j < contents.length; j++)
+        if (contents[j] == manage.playerLiteral)
+            numPlayers++;
+    console.log("PLAYERS:", numPlayers);
+    return numPlayers;
+}
+
+function watchForIncantationEnd(serverResponse) {
+    serverResponse = serverResponse.split('\n');
+    for (let i = 0; i < serverResponse.length; i++) {
+        if (serverResponse[i][0] == manage.finishIncant) {
+            return parseInt(serverResponse[i].split(': ')[1]);
+        }
+    }
+    return -1;
+}
+
+function dropAllItems() {
+    let ret = "";
+    for (let i = 1; i < memory.resourcesGuess.length; i++) {
+        if (memory.resourcesGuess[i] > 0) {
+            ret += manage.commands[6] + ' ' + manage.items[i] + '\n';
+        }
+    }
+    return ret;
+}
 function AILevelUpResponse(serverResponse) {
     let response = "";
+    let newLvl = -1;
     //Before this check if food has reached large value, like 50, keep checking if it needs food, food always above 50.
+    // if (memory.inIncantation == true) {
+    if ((newLvl = watchForIncantationEnd(serverResponse)) > -1) {
+        memory.inBroadcast = false;
+        memory.inIncantation = false;
+        memory.doingBroadcast = false;
+        memory.goToLeader = false;
+        memory.hasForked = false;
+        memory.lvl = newLvl;
+        return manage.commands[3] + '\n';
+    }
+    console.log("NEW LVL", newLvl);
+    if (memory.inIncantation == true) {
+        console.warn("DOING INCANTATION");
+        return "";
+    }
+    // }
     if (itemThatsNeeded() == -1) {
         memory.inBroadcast = true;
         if (memory.hasForked == false) {
@@ -116,14 +167,23 @@ function AILevelUpResponse(serverResponse) {
             return manage.commands[10] + '\n';
         }
     }
-    if (memory.inBroadcast == true) {
+    if (memory.inBroadcast == true && memory.inIncantation == false) {
         console.log("FOOODD", memory.resourcesGuess[0]);
         if (memory.resourcesGuess[0] > 50 && memory.goToLeader == false) {
             memory.doingBroadcast = true;
             console.warn("DOING BROADCAST");
+            serverResponse = serverResponse.split('\n');
+            for (let i = 0; i < serverResponse.length; i++) {
+                if (serverResponse[i][0] == "{") {
+                    if (howManyPlayersOnSquare(serverResponse[i]) == levelUpSchema[memory.lvl - 1][0] - 1) {
+                        memory.inIncantation = true;
+                        return dropAllItems() + manage.commands[9] + '\n';
+                    }
+                }
+            }
             return ifBroadcast();
         }
-        else if (memory.goToLeader == true || memory.doingBroadcast == false || memory.resourcesGuess[0] <= 10) {
+        else if (memory.inIncantation == false && (memory.goToLeader == true || memory.doingBroadcast == false || memory.resourcesGuess[0] <= 10)) {
             memory.doingBroadcast = false;
             return aisurvive.response(serverResponse);
         }

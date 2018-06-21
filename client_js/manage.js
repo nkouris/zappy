@@ -19,6 +19,10 @@ const commands = [
     "connect_nbr"
 ];
 
+const finishIncant = 'n';
+const finishIncant_fr = 'c';
+const playerLiteral = 'joueur';
+const playerLiteral_fr = 'player';
 const commands_fr = [
     "advance",
     "right",
@@ -129,3 +133,5 @@ module.exports.fork_client = fork_client;
 module.exports.advance = advance;
 module.exports.turnLeft = turnLeft;
 module.exports.turnRight = turnRight;
+module.exports.playerLiteral = playerLiteral;
+module.exports.finishIncant = finishIncant;
