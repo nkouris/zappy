@@ -173,6 +173,7 @@ function drawPlayers() {
         player = gfxConfig.players[playerid];
         player.moveTowardLoc(gfxConfig.delta, gfxConfig.timeInterval);
         setPositionOnGrid(player.model, player.loc.x + 1, player.loc.y + 1, getPlayerHeight(player));
+        player.setScale();
         // if(player.inBroadcast != undefined && player.inBroadcast <= new Date() + (1000 * 7 / gfxConfig.timeInterval))
         //     player.broadcastTorus.scale.set(player.broadcastTorus.scale.x + 1, 1, player.broadcastTorus.scale.z + 1);
     }

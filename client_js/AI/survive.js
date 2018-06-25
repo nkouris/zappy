@@ -26,7 +26,7 @@ function AISurviveResponse(serverResponse) {
         if (serverResponse[i] == 'ok')
             memory.okRecieved--;
         if (serverResponse[i][0] == 'm' && memory.okRecieved <= 0) {
-            if (memory.resourcesGuess[0] > 20) {
+            if (memory.resourcesGuess[0] > memory.lvl * 20) {
                 memory.blockToGoTo = aiLvlUp.parseMessage(serverResponse[i]);
                 if (memory.blockToGoTo >= 0) {
                     memory.goToLeader = true;
@@ -37,6 +37,7 @@ function AISurviveResponse(serverResponse) {
                     return goToBlock[0] + manage.commands[4] + '\n';
                 }
             } else {
+                response += manage.commands[3] + '\n';
                 memory.goToLeader = false;
             }
         }

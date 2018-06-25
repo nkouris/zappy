@@ -3,6 +3,7 @@ var remote = require('electron').remote,
     args = remote.getGlobal('sharedObject').prop1;
 let debug = require('./debug');
 let manage = require('./manage');
+let memory = require("./AI/clientMem");
 /* Import: the net library for using unix sockets in js. */
 let unixSock = require('net');
 /* Zappy Controller */
@@ -33,6 +34,12 @@ zsock.on('data', function (buffer) {
         console.log(response);
         debug.log('client', response);
         zsock.write(response);
+    }else{
+        if(memory.commandSentCount < 0){
+        memory.commandSentCount = 20;
+            console.warn('Sending Emergency idle message', response);
+            zsock.write(manage.commands[3] + '\n');
+        }
     }
 });
 

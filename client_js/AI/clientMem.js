@@ -36,4 +36,5 @@ module.exports = {
     hasForked: false,
     okRecieved: false,
     broadcastDelay: 10,
+    commandSentCount: 10
 }

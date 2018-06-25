@@ -149,6 +149,7 @@ function AILevelUpResponse(serverResponse) {
         memory.doingBroadcast = false;
         memory.goToLeader = false;
         memory.hasForked = false;
+        manage.fork_client();
         memory.lvl = newLvl;
         return manage.commands[3] + '\n';
     }
@@ -169,7 +170,7 @@ function AILevelUpResponse(serverResponse) {
     }
     if (memory.inBroadcast == true && memory.inIncantation == false) {
         console.log("FOOODD", memory.resourcesGuess[0]);
-        if (memory.resourcesGuess[0] > 50 && memory.goToLeader == false) {
+        if (memory.resourcesGuess[0] > memory.lvl * 30 && memory.goToLeader == false) {
             memory.doingBroadcast = true;
             console.warn("DOING BROADCAST");
             serverResponse = serverResponse.split('\n');

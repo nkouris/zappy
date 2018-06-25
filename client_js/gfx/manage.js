@@ -201,25 +201,29 @@ function isPlayerLevel(buffer) {
     buffer = buffer.split(' ');
     let playerId = parseInt(buffer[1]);
     gfx.config.players[playerId].lvl = parseInt(buffer[2]);
+    if (gfx.config.players[playerId].isPartying == true)
+        gfx.config.players[playerId].isPartying = false;
 }
 
 function isStartIncantation(buffer) {
     console.warn("---In Start Incantation---");
+    buffer = buffer.split(' ');
+    let xPosOfIncant = parseInt(buffer[1]);
+    let yPosOfIncant = parseInt(buffer[2]);
+    for (let playerId in gfx.config.players) {
+        if (gfx.config.players[playerId].target.x == xPosOfIncant && gfx.config.players[playerId].target.y == yPosOfIncant) {
+            gfx.config.players[playerId].isPartying = true;
+            gfx.config.players[playerId].scaleHead = false;
+        }
+    }
 }
 
 function isBroadcast(buffer) {
+    console.warn("---In Broadcast---");
     buffer = buffer.split(' ');
     let playerId = parseInt(buffer[1]);
     let player = gfx.config.players[playerId];
-    player.inBroadcast = new Date();
-    var geometry = new THREE.TorusBufferGeometry(1, 0.1, 2, 15);
-    var material = new THREE.MeshBasicMaterial({ color: 0xffff00 });
-    var torus = new THREE.Mesh(geometry, material);
-    if (gfx.config.players[playerId].broadcastTorus != undefined)
-        gfx.scene.remove(player.broadcastTorus);
-    setPositionOnGrid(torus, player.loc.x + 1, player.loc.y + 1);
-    gfx.scene.add(torus);
-    gfx.config.players[playerId].broadcastTorus = torus;
+    player.scaleHead = true;
 }
 module.exports.responseToServer = responseToServer;
 // module.exports.reconnect = reconnect;

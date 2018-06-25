@@ -35,6 +35,11 @@ function Player(op) {
     this.setHeight = false;
     this.inBroadcast;
     this.broadcastTorus = op.broadcastTorus;
+    this.isPartying = false;
+    this.partyScale = 1;
+    this.partyScaleDerivative = 1;
+    this.orgScale = this.model.children[0].scale.x;
+    this.scaleHead = false;
 }
 
 Player.prototype.moveTowardLoc = function (timeExec, timeInterval) {
@@ -82,5 +87,24 @@ Player.prototype.displayInventory = function () {
     $Lvl.innerHTML = this.lvl;
     for (let i = 0; i < $quantsSpans.length; i++)
         $quantsSpans[i].innerHTML = this.inventory[i];
+}
+
+Player.prototype.setScale = function () {
+    let scale = this.lvl;
+    if (this.isPartying == true || this.scaleHead) {
+        if (this.partyScale == 1)
+            this.partyScaleDerivative = 1;
+        else if (this.partyScale == 8)
+            this.partyScaleDerivative = -1;
+        this.partyScale += this.partyScaleDerivative;
+        scale = this.partyScale;
+    }
+    if (this.scaleHead)
+        this.model.children[1].scale.set(this.orgScale / 8 * scale, this.orgScale / 8 * scale, this.orgScale / 8 * scale);
+    else {
+        this.model.children[0].scale.set(this.orgScale / 8 * scale, this.orgScale / 8 * scale, this.orgScale / 8 * scale);
+        this.model.children[1].scale.set(this.orgScale, this.orgScale, this.orgScale);
+    }
+    // this.model.children[1].scale.set(this.orgScale/8 * scale, this.orgScale/8 * scale, this.orgScale/8 * scale);
 }
 module.exports.class = Player;

@@ -46,7 +46,8 @@ const items_fr = [
     "mendiane",
     "phiras",
     "thystame"
-]
+];
+
 const items = [
     "nourriture",
     "linemate",
@@ -90,13 +91,15 @@ function isInitDataFormat(buffer) {
     - Manages the proper response to the server upon a message (buffer).
 */
 function fork_client() {
-    const ls = spawn('./client.sh', ['-n', args[2], '-p', args[3], '-h', args[4]],{
-        stdio: 'ignore'
-      });
-
-    ls.on('close', (code) => {
-        console.log(`child process exited with code ${code}`);
-    });
+    if(args[5] != "isChild"){
+        const ls = spawn('./client.sh', ['-n', args[2], '-p', args[3], '-h', args[4], "isChild"],{
+            stdio: 'ignore'
+          });
+    
+        ls.on('close', (code) => {
+            console.log(`child process exited with code ${code}`);
+        });
+    }
 }
 let hasSeen = false;
 function responseToServer(buffer) {
